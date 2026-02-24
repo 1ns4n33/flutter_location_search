@@ -419,15 +419,14 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
             ],
           ),
         ),
-          Container(
+        Container(
           margin: const EdgeInsets.all(5),
-              
-              child: const  Text(
-                '© OpenStreetMap contributors.',
-                style: TextStyle(
-                  fontSize: 10,
-                ),
-              ),
+          child: const Text(
+            '© OpenStreetMap contributors.',
+            style: TextStyle(
+              fontSize: 10,
+            ),
+          ),
         ),
       ],
     );
@@ -451,11 +450,11 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
     );
 
     final response = await _client.get(
-        Uri.parse(url),
-        headers: {
-          'User-Agent': widget.userAgent.toString(),
-        },
-      );
+      Uri.parse(url),
+      headers: {
+        'User-Agent': widget.userAgent.toString(),
+      },
+    );
 
     final decodedResponse =
         jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
@@ -577,7 +576,9 @@ class LocationSearch {
           historyMaxLength: historyMaxLength,
           userAgent: userAgent,
         );
-
+    if (mode == Mode.bottomSheet) {
+      return showModalBottomSheet(context: context, builder: builder);
+    }
     if (mode == Mode.overlay) {
       return showDialog(context: context, builder: builder);
     }

@@ -46,7 +46,7 @@ class LatLong {
   LatLong(this.latitude, this.longitude);
 }
 
-enum Mode { overlay, fullscreen }
+enum Mode { overlay, fullscreen, bottomSheet }
 
 class HistoryManager {
   static const _historyKey = 'HISTORY';
@@ -72,7 +72,7 @@ class HistoryManager {
 /// An User-Agent is an http request header that is sent with each request.
 /// OpenStreetMap’s Nominatim service (used for geocoding) requires a user-agent to identify your application.
 /// If you don’t provide one, your requests might get blocked or throttled.
-class UserAgent{
+class UserAgent {
   /// The name of your application (eg: geo-app)
   final String appName;
 
@@ -82,11 +82,7 @@ class UserAgent{
   /// Email contact. OSM Nominatim asks that the user_agent also contains your email address (eg: support@myapp.com)
   final String email;
 
-  UserAgent({
-    required this.appName,
-    required this.email,
-    this.version="1.0"
-  });
+  UserAgent({required this.appName, required this.email, this.version = "1.0"});
 
   @override
   String toString() {
