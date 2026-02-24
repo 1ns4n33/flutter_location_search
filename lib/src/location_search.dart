@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -588,7 +589,12 @@ class LocationSearch {
           userAgent: userAgent,
         );
     if (mode == Mode.bottomSheet) {
-      return showModalBottomSheet(context: context, builder: builder);
+      return showModalBottomSheet(
+          context: context,
+          backgroundColor: CupertinoColors.darkBackgroundGray,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(16)),
+          builder: builder);
     }
     if (mode == Mode.overlay) {
       return showDialog(context: context, builder: builder);
