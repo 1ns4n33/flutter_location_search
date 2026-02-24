@@ -535,9 +535,20 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
     );
   }
 
+  Widget _buildBottomSheet() {
+    return SafeArea(
+      child:
+          isLoading ? Center(child: widget.loadingWidget) : _buildSearchBar(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.mode == Mode.overlay ? _buildDialog() : _buildScaffold();
+    return widget.mode == Mode.overlay
+        ? _buildDialog()
+        : widget.mode == Mode.bottomSheet
+            ? _buildBottomSheet()
+            : _buildScaffold();
   }
 }
 
