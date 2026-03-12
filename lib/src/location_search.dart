@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
@@ -363,74 +361,76 @@ class _LocationSearchWidgetState extends State<LocationSearchWidget> {
   }
 
   Widget _buildSearchBar() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: TextFormField(
-            textDirection: isRTL(_searchController.text)
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            style: TextStyle(color: widget.searchBarTextColor),
-            controller: _searchController,
-            focusNode: _focusNode,
-            decoration: InputDecoration(
-              filled: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              fillColor:
-                  widget.searchBarBackgroundColor ?? _defaultSearchBarColor,
-              hintText: widget.searchBarHintText,
-              hintTextDirection: isRTL(widget.searchBarHintText)
+    return DraggableScrollableSheet(builder: (context, scroll) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              textDirection: isRTL(_searchController.text)
                   ? TextDirection.rtl
                   : TextDirection.ltr,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-              hintStyle: TextStyle(color: widget.searchBarHintColor),
-              suffixIcon: IconButton(
-                onPressed: _searchController.clear,
-                icon: Icon(
-                  Icons.clear,
-                  color: widget.iconColor,
+              style: TextStyle(color: widget.searchBarTextColor),
+              controller: _searchController,
+              focusNode: _focusNode,
+              decoration: InputDecoration(
+                filled: true,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                fillColor:
+                    widget.searchBarBackgroundColor ?? _defaultSearchBarColor,
+                hintText: widget.searchBarHintText,
+                hintTextDirection: isRTL(widget.searchBarHintText)
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+                hintStyle: TextStyle(color: widget.searchBarHintColor),
+                suffixIcon: IconButton(
+                  onPressed: _searchController.clear,
+                  icon: Icon(
+                    Icons.clear,
+                    color: widget.iconColor,
+                  ),
                 ),
               ),
+              onChanged: (value) {
+                _debounce.run(() async {
+                  try {
+                    _options = await _onSearch(value);
+                    setState(() {});
+                  } on Exception catch (e) {
+                    onError(e);
+                  }
+                });
+              },
             ),
-            onChanged: (value) {
-              _debounce.run(() async {
-                try {
-                  _options = await _onSearch(value);
-                  setState(() {});
-                } on Exception catch (e) {
-                  onError(e);
-                }
-              });
-            },
           ),
-        ),
-        Expanded(
-          child: CustomScrollView(
-            controller: ScrollController(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: _buildSelectCurrentPositionButton(),
+          Expanded(
+            child: CustomScrollView(
+              controller: scroll,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _buildSelectCurrentPositionButton(),
+                ),
+                _buildListView(),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(5),
+            child: const Text(
+              '© OpenStreetMap contributors.',
+              style: TextStyle(
+                fontSize: 10,
               ),
-              _buildListView(),
-            ],
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(5),
-          child: const Text(
-            '© OpenStreetMap contributors.',
-            style: TextStyle(
-              fontSize: 10,
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Future<List<LocationData>> _onSearch(String value) async {
@@ -591,7 +591,7 @@ class LocationSearch {
     if (mode == Mode.bottomSheet) {
       return showModalBottomSheet(
           context: context,
-          backgroundColor: CupertinoColors.darkBackgroundGray,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadiusGeometry.circular(16)),
           builder: builder);
